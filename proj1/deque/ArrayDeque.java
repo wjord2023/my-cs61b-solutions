@@ -85,10 +85,10 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
   @Override
   public T get(int index) {
-    if (index <= firstArraySize) {
-      return items[items.length - index];
+    if (index < firstArraySize) {
+      return items[firstIndex() + index];
     } else {
-      return items[index - firstArraySize - 1];
+      return items[lastIndex() - (index - firstArraySize)];
     }
   }
 
