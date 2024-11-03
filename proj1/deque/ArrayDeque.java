@@ -30,7 +30,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
   }
 
   private int lastIndex() {
-    return items.length - lastArraySize;
+    return lastArraySize - 1;
   }
 
   @Override
