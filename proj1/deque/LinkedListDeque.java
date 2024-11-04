@@ -103,6 +103,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
       if (index == 0) {
         return item;
       }
+      index -= 1;
     }
     return null;
   }

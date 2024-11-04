@@ -4,61 +4,108 @@ import java.util.Iterator;
 
 public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
   private T[] items;
-  private int firstArraySize;
-  private int lastArraySize;
+  private int firstIndex;
+  private int lastIndex;
+  private int size;
+  private boolean inited;
 
   public ArrayDeque() {
     this.items = (T[]) new Object[8];
-    this.firstArraySize = 0;
-    this.lastArraySize = 0;
+    this.firstIndex = 0;
+    this.lastIndex = 0;
+    this.size = 0;
+    this.inited = false;
   }
 
   private void resize(int capacity) {
     T[] newItems = (T[]) new Object[capacity];
-    System.arraycopy(items, 0, newItems, 0, lastArraySize);
-    System.arraycopy(items, lastArraySize, newItems, capacity - lastArraySize, firstArraySize);
 
-    this.items = newItems;
+    for (int i = 0; i < size; i++) {
+      newItems[i] = items[(firstIndex + i) % items.length];
+    }
+
+    items = newItems;
+    firstIndex = 0;
+    lastIndex = size - 1;
   }
 
   private boolean isFull() {
-    return firstArraySize + lastArraySize == items.length;
+    return size == items.length;
   }
 
-  private int firstIndex() {
-    return items.length - firstArraySize;
+  private void decreaseFirstIndex() {
+    if (firstIndex == 0) {
+      firstIndex = items.length - 1;
+    } else {
+      firstIndex -= 1;
+    }
   }
 
-  private int lastIndex() {
-    return lastArraySize - 1;
+  private void decreaseLastIndex() {
+    if (lastIndex == 0) {
+      lastIndex = items.length - 1;
+    } else {
+      lastIndex -= 1;
+    }
+  }
+
+  private void increaseLastIndex() {
+    if (lastIndex == items.length - 1) {
+      lastIndex = 0;
+    } else {
+      lastIndex += 1;
+    }
+  }
+
+  private void increaseFirstIndex() {
+    if (firstIndex == items.length - 1) {
+      firstIndex = 0;
+    } else {
+      firstIndex += 1;
+    }
   }
 
   @Override
   public void addFirst(T item) {
+    if (inited == false) {
+      items[0] = item;
+      inited = true;
+      size += 1;
+      return;
+    }
     if (isFull()) {
       resize(items.length * 2);
     }
-    firstArraySize += 1;
-    items[firstIndex()] = item;
+    decreaseFirstIndex();
+    items[firstIndex] = item;
+    size += 1;
   }
 
   @Override
   public void addLast(T item) {
+    if (inited == false) {
+      items[0] = item;
+      inited = true;
+      size += 1;
+      return;
+    }
     if (isFull()) {
       resize(items.length * 2);
     }
-    lastArraySize += 1;
-    items[lastIndex()] = item;
+    increaseLastIndex();
+    items[lastIndex] = item;
+
+    size += 1;
   }
 
   @Override
   public boolean isEmpty() {
-    return lastArraySize == 0 && firstArraySize == 0;
+    return size == 0;
   }
 
   @Override
   public int size() {
-    return firstArraySize + lastArraySize;
+    return size;
   }
 
   @Override
@@ -71,24 +118,30 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
   @Override
   public T removeFirst() {
-    T removed = items[firstIndex()];
-    firstArraySize -= 1;
+    T removed = items[firstIndex];
+    items[firstIndex] = null;
+    increaseFirstIndex();
+
+    size -= 1;
     return removed;
   }
 
   @Override
   public T removeLast() {
-    T removed = items[lastIndex()];
-    lastArraySize -= 1;
+    T removed = items[lastIndex];
+    items[lastIndex] = null;
+    decreaseLastIndex();
+
+    size -= 1;
     return removed;
   }
 
   @Override
   public T get(int index) {
-    if (index < firstArraySize) {
-      return items[firstIndex() + index];
+    if (index < size) {
+      return items[(firstIndex + index) % items.length];
     } else {
-      return items[lastIndex() - (index - firstArraySize)];
+      return null;
     }
   }
 
@@ -97,7 +150,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
     @Override
     public boolean hasNext() {
-      return index < firstArraySize + lastArraySize;
+      return index < size;
     }
 
     @Override
@@ -120,6 +173,15 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     ArrayDeque<T> other = (ArrayDeque<T>) o;
-    return other.items.equals(this.items);
+    if (this.size() != other.size()) {
+      return false;
+    }
+
+    for (int i = 0; i < size; i++) {
+      if (!this.get(i).equals(other.get(i))) {
+        return false;
+      }
+    }
+    return true;
   }
 }
