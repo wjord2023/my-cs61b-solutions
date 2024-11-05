@@ -137,13 +137,13 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
       return false;
     }
 
-    Deque<T> other = (Deque<T>) o;
+    Deque<?> other = (Deque<?>) o;
     if (this.size() != other.size()) {
       return false;
     }
 
     Iterator<T> thisIter = this.iterator();
-    Iterator<T> otherIter = other.iterator();
+    Iterator<?> otherIter = other.iterator();
     while (thisIter.hasNext()) {
       if (!thisIter.next().equals(otherIter.next())) {
         return false;
