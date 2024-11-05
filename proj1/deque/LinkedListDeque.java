@@ -67,11 +67,6 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
   }
 
   @Override
-  public boolean isEmpty() {
-    return size == 0;
-  }
-
-  @Override
   public T removeFirst() {
     if (isEmpty()) {
       return null;
@@ -138,21 +133,19 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof LinkedListDeque)) {
+    if (!(o instanceof Deque)) {
       return false;
     }
 
-    LinkedListDeque<T> other = (LinkedListDeque<T>) o;
+    Deque<T> other = (Deque<T>) o;
     if (this.size() != other.size()) {
       return false;
     }
 
-    Iterator<T> thisIterator = this.iterator();
-    Iterator<T> otherIterator = other.iterator();
-    while (thisIterator.hasNext() && otherIterator.hasNext()) {
-      T thisItem = thisIterator.next();
-      T otherItem = otherIterator.next();
-      if (!thisItem.equals(otherItem)) {
+    Iterator<T> thisIter = this.iterator();
+    Iterator<T> otherIter = other.iterator();
+    while (thisIter.hasNext()) {
+      if (!thisIter.next().equals(otherIter.next())) {
         return false;
       }
     }
