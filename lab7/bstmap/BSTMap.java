@@ -3,8 +3,8 @@ package bstmap;
 import java.util.*;
 
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
-    int size;
-    Node root;
+    private int size;
+    private Node root;
 
     private class Node {
         K key;
@@ -23,9 +23,15 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         root = null;
     }
 
-    public BSTMap(K key, V value) {
-        size = 1;
-        root = new Node(key, value);
+    private void printInOrder(Node node) {
+        if (node != null) {
+            printInOrder(node.left);
+            System.out.print(node.key + " ");
+            printInOrder(node.right);
+        }
+    }
+
+    public void printInOrder() {
     }
 
     @Override
